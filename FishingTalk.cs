@@ -152,7 +152,16 @@ namespace FishingTalk
             WebhookRequest json = JsonConvert.DeserializeObject<WebhookRequest>(request);
             return json;
         }
+
+        public override void onEnd()
+        {
+            base.onEnd();
+
+            // these statements are needed to allow for the plugin to be reloaded!
+            _discordBot.Stop();
+        }
     }
+
     public class DiscordBot
     {
         private DiscordSocketClient _client;
@@ -497,6 +506,14 @@ namespace FishingTalk
 
             _plugin.SendWebfishMessage(authorUsername, message.Content);
         }
-    
+
+        public void Stop()
+        {
+            if (_client != null)
+            {
+                _client.LogoutAsync();
+                _client.StopAsync();
+            }
+        }
     }
 }
